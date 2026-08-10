@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import './PropertyFilters.css';
 
 function PropertyFilters({ onSearch }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [filters, setFilters] = useState({
-    city: '',
-    zipcode: '',
-    minPrice: '',
-    maxPrice: '',
-    beds: '',
-    baths: ''
+    city: searchParams.get('city') || '',
+    zipcode: searchParams.get('zipcode') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    beds: searchParams.get('beds') || '',
+    baths: searchParams.get('baths') || ''
   });
 
   const handleChange = (e) => {

@@ -3,15 +3,28 @@ import { fetchProperties } from '../api/client';
 import PropertyFilters from '../components/PropertyFilters';
 import './ListingsPage.css';
 import Pagination from '../components/Pagination';
+import { useNavigate } from 'react-router-dom';
+import PropertyImageCarousel from '../components/PropertyImageCarousel';
+import { useSearchParams } from 'react-router-dom';
 
 function ListingsPage() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
-  const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useState({
+    city: searchParams.get('city') || '',
+    zipcode: searchParams.get('zipcode') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    beds: searchParams.get('beds') || '',
+    baths: searchParams.get('baths') || ''
+  });
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get('page')) || 1
+  );
 
   useEffect(() => {
     loadProperties();
@@ -46,11 +59,21 @@ function ListingsPage() {
   const handleSearch = (newFilters) => {
     setFilters(newFilters);
     setCurrentPage(1);
+
+    setSearchParams({
+    ...newFilters,
+    page: '1'
+  });
   };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     window.scrollTo(0, 0); // Scroll to top
+
+    setSearchParams({
+    ...filters,
+    page: String(newPage)
+  });
   };
 
   const totalPages = Math.ceil(total / itemsPerPage);
@@ -103,41 +126,19 @@ function ListingsPage() {
 
 }
 
-function getFirstPhoto(photoJson) {
-  if (!photoJson) {
-    return null;
-  }
-  try {
-    const photos = JSON.parse(photoJson);
-    if (Array.isArray(photos) && photos.length > 0 && photos[0]) {
-        return photos[0];
-    }
-    return null;
-  } catch (error) {
-    return null;
-  }
-}
-
 function PropertyCard({ property }) {
-  const firstPhoto = getFirstPhoto(property.L_Photos);
-  const [imageFailed, setImageFailed] = useState(false);
-  const shouldShowImage = firstPhoto && !imageFailed;
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/property/${property.L_ListingID}`);
+  };
 
   return (
-    <div className="property-card">
+    <div className="property-card" onClick={handleClick}>
       <div className="property-image">
-        {shouldShowImage ? (
-        <img
-          src={firstPhoto}
-          alt={property.L_Address}
-          onError={() => setImageFailed(true)}
-        />
-        ) : (
-        <div>
-          Image unavailable
-        </div>
-      )}
+        <PropertyImageCarousel photos={property.L_Photos} address={property.L_Address} />
       </div>
+
       
       <div className="property-info">
         <div className="price">${property.L_SystemPrice?.toLocaleString()}</div>
