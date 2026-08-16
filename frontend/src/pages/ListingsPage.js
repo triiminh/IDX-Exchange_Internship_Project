@@ -6,6 +6,7 @@ import Pagination from '../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import PropertyImageCarousel from '../components/PropertyImageCarousel';
 import { useSearchParams } from 'react-router-dom';
+import { useFavorites } from '../hooks/useFavorites';
 
 function ListingsPage() {
   const [properties, setProperties] = useState([]);
@@ -128,13 +129,33 @@ function ListingsPage() {
 
 function PropertyCard({ property }) {
   const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+  
+  const favorite = isFavorite(property.L_ListingID);
 
   const handleClick = () => {
     navigate(`/property/${property.L_ListingID}`);
   };
 
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation(); // Prevent navigation
+    if (favorite) {
+      removeFavorite(property.L_ListingID);
+    } else {
+      addFavorite(property.L_ListingID);
+    }
+  };
+
+
   return (
     <div className="property-card" onClick={handleClick}>
+      <button
+        className={`favorite-btn ${favorite ? 'active' : ''}`}
+        onClick={handleFavoriteClick}
+        aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
+      >
+        {favorite ? '♥' : '♡'}
+      </button>
       <div className="property-image">
         <PropertyImageCarousel photos={property.L_Photos} address={property.L_Address} />
       </div>

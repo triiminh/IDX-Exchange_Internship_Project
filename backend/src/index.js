@@ -12,10 +12,19 @@ app.use(express.json());
 
 // Request logging middleware
 app.use((req, res, next) => {
+  const start = Date.now();
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${req.method} ${req.url}`);
+  
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(
+      `[${timestamp}] ${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`
+    );
+  });
+  
   next();
 });
+
 
 // Routes
 app.use('/api/properties', propertiesRouter);
