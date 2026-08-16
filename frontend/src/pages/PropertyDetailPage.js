@@ -130,10 +130,10 @@ function PropertyDetailPage() {
             </div>
           </div>
 
-          {property.PublicRemarks && (
+          {property.L_Remarks && (
             <div className="property-section">
               <h2>Description</h2>
-              <p className="property-description">{property.PublicRemarks}</p>
+              <p className="property-description">{property.L_Remarks}</p>
             </div>
           )}
 
