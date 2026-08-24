@@ -149,15 +149,15 @@ function PropertyCard({ property }) {
 
   return (
     <div className="property-card" onClick={handleClick}>
-      <button
-        className={`favorite-btn ${favorite ? 'active' : ''}`}
-        onClick={handleFavoriteClick}
-        aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
-      >
-        {favorite ? '♥' : '♡'}
-      </button>
       <div className="property-image">
         <PropertyImageCarousel photos={property.L_Photos} address={property.L_Address} />
+        <button
+          className={`favorite-btn ${favorite ? 'active' : ''}`}
+          onClick={handleFavoriteClick}
+          aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {favorite ? '♥' : '♡'}
+        </button>
       </div>
 
       
@@ -177,6 +177,7 @@ function PropertyCard({ property }) {
             </>
           )}
         </div>
+        
       </div>
     </div>
   );
